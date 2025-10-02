@@ -3,11 +3,13 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/go-redis/redis"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	_ "github.com/lib/pq"
 )
@@ -83,6 +85,31 @@ func main() {
 		// Prometheus metrics endpoint
 		http.Handle("/metrics", promhttp.Handler())
 
+		fmt.Println("Coordinator HTTP server running on :9000")
+		fmt.Println("Prometheus metrics running on :9000/metrics")
+
+		log.Fatal(http.ListenAndServe(":9000", nil))
 	}()
+
+	// Worker Heartbeat Verifier
+	go workerHeartbeatVerifier()
+
+	// Job Distributer
+	go distributeJobs()
+
+	// Lease Monitor
+	go leaseMonitor()
+
+	// Job Result Processor
+	go processJobResults()
+
+	// DLQ Processor
+	go processDLQ()
+
+	// Metrics Updater
+	go updateMetrics()
+
+	// Block forever
+	select {}
 
 }
