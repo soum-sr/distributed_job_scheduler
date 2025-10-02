@@ -71,7 +71,7 @@ func main() {
 
 	// Set HTTP Server
 	r := mux.NewRouter()
-	r.HandlerFunc("/submit_job", createJobHandler).Methods("POST")
+	r.HandleFunc("/submit_job", createJobHandler).Methods("POST")
 
 	fmt.Println("Scheduler service is running on :8000")
 	log.Fatal(http.ListenAndServe(":8000", r))
