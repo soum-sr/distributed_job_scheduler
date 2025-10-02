@@ -1,0 +1,270 @@
+{
+    "id": null,
+    "title": "Distributed Job Scheduler Dashboard",
+    "tags": ["distributed", "task", "scheduler"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Jobs Processed (Rate/5m)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(rate(dts_jobs_total[5m])) by (status)",
+            "legendFormat": "{{status}}/sec",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "reqps"
+          }
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "id": 8,
+        "title": "Jobs Total Count",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "dts_jobs_total{status=\"completed\"}",
+            "legendFormat": "Completed",
+            "refId": "A"
+          },
+          {
+            "expr": "dts_jobs_total{status=\"failed\"}",
+            "legendFormat": "Failed",
+            "refId": "B"
+          },
+          {
+            "expr": "dts_jobs_total{status=\"timeout\"}",
+            "legendFormat": "Timeout",
+            "refId": "C"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "mappings": [],
+            "thresholds": {
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Completed"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "fixed",
+                    "fixedColor": "green"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Failed"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "fixed",
+                    "fixedColor": "red"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Timeout"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "fixed",
+                    "fixedColor": "orange"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 6,
+          "y": 0
+        }
+      },
+      {
+        "id": 2,
+        "title": "Active Workers by State",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "dts_workers_active",
+            "legendFormat": "{{state}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            }
+          }
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 12,
+          "y": 0
+        }
+      },
+      {
+        "id": 3,
+        "title": "Queue Status",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "dts_jobs_in_queue",
+            "legendFormat": "Jobs in Queue",
+            "refId": "A"
+          },
+          {
+            "expr": "dts_jobs_in_dlq",
+            "legendFormat": "Jobs in DLQ",
+            "refId": "B"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 18,
+          "y": 0
+        }
+      },
+      {
+        "id": 4,
+        "title": "Jobs in Queue Over Time",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "dts_jobs_in_queue",
+            "legendFormat": "Queue Length",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            }
+          }
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        }
+      },
+      {
+        "id": 5,
+        "title": "Job Processing Duration",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(dts_job_processing_duration_seconds_bucket[5m]))",
+            "legendFormat": "95th percentile",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.50, rate(dts_job_processing_duration_seconds_bucket[5m]))",
+            "legendFormat": "50th percentile",
+            "refId": "B"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s"
+          }
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        }
+      },
+      {
+        "id": 6,
+        "title": "Retry Attempts Distribution",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "rate(dts_job_retry_attempts_sum[5m]) / rate(dts_job_retry_attempts_count[5m])",
+            "legendFormat": "Avg Retries - {{reason}}",
+            "refId": "A"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 16
+        }
+      },
+      {
+        "id": 7,
+        "title": "Lease Timeouts Rate",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "rate(dts_lease_timeouts_total[5m])",
+            "legendFormat": "Timeouts/sec",
+            "refId": "A"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 16
+        }
+      }
+    ],
+    "time": {
+      "from": "now-15m",
+      "to": "now"
+    },
+    "refresh": "5s",
+    "version": 1
+  }
+  
+  

@@ -1,0 +1,134 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER: user
+      - POSTGRES_PASSWORD: password
+      - POSTGRES_DB: db
+    ports:
+      -"5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
+
+  redis:
+    image: redis:7
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command: 
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+
+  submitter:
+    build: ../submitter
+    container_name: submitter
+    restart: always
+    environment:
+      - DB_HOST: postgres
+      - DB_PORT: 5432
+      - DB_USER: user
+      - DB_PASSWORD: password
+      - DB_NAME: db
+      - DATABASE_URL: postgres://user:password@postgres:5432/db?sslmode=disable
+      - REDIS_ADDR: redis:6379
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+
+  coordinator:
+    build: ../coordinator
+    container_name: coordinator
+    restart: always
+    environment:
+      - DB_HOST: postgres
+      - DB_PORT: 5432
+      - DB_USER: user
+      - DB_PASSWORD: password
+      - DB_NAME: db
+      - DATABASE_URL: postgres://user:password@postgres:5432/db?sslmode=disable
+      - REDIS_ADDR: redis:6379
+    ports:
+      - "9000:9000"
+    depends_on:
+      - postgres
+      - redis
+
+  worker1:
+    build: ../worker
+    container_name: worker_1
+    restart: always
+    environment:
+      - WORKER_PORT: 7001
+      - WORKER_URL: http://worker_1:7001
+      - COORDINATOR_URL: http://coordinator:9000
+      - REDIS_ADDR: redis://redis:6379
+    ports:
+      - "7001:7001"
+    depends_on:
+      - coordinator
+      - redis
+
+  worker2:
+    build: ../worker
+    container_name: worker_2
+    restart: always
+    environment:
+      - WORKER_PORT: 7002
+      - WORKER_URL: http://worker_2:7002
+      - COORDINATOR_URL: http://coordinator:9000
+      - REDIS_ADDR: redis://redis:6379
+    ports:
+      - "7002:7002"
+    depends_on:
+      - coordinator
+      - redis
+
+  worker3:
+    build: ../worker
+    container_name: worker_3
+    restart: always
+    environment:
+      - WORKER_PORT: 7003
+      - WORKER_URL: http://worker_3:7003
+      - COORDINATOR_URL: http://coordinator:9000
+      - REDIS_ADDR: redis://redis:6379
+    ports:
+      - "7003:7003"
+    depends_on:
+      - coordinator
+      - redis
+
+volumes:
+  pgdata:
+  grafana-storage:
