@@ -1,4 +1,4 @@
-# Distributed Job Scheduler (WIP)
+# Distributed Job Scheduler
 
 A robust, scalable distributed job scheduling system built with Go, Python, Redis, PostgreSQL, and monitored with Prometheus & Grafana.
 
@@ -94,5 +94,51 @@ curl -X POST http://localhost:8000/submit_job \
 
 
 ## Project Structure
+```
+.
+├── Makefile
+├── README.md
+├── coordinator
+│   ├── Dockerfile
+│   ├── go.mod
+│   ├── go.sum
+│   ├── handlers.go
+│   ├── jobs.go
+│   ├── main.go
+│   ├── metrics.go
+│   ├── utils.go
+│   └── worker.go
+├── deploy
+│   ├── docker-compose.yml
+│   ├── grafana
+│   │   └── provisioning
+│   │       ├── dashboards
+│   │       │   ├── dashboard.yml
+│   │       │   └── dashboard_content.json
+│   │       └── datasources
+│   │           └── prometheus.yml
+│   ├── initdb
+│   │   └── 01_schema.sql
+│   └── prometheus
+│       └── prometheus.yml
+├── docs
+│   └── architecture-diagram.png
+├── go.work
+├── go.work.sum
+├── scripts
+│   ├── high_volume_stress_test.sh
+│   ├── send_cpu_intensive_jobs.sh
+│   ├── send_failing_jobs.sh
+│   ├── send_io_intensive_jobs.sh
+│   └── send_network_intensive_jobs.sh
+├── submitter
+│   ├── Dockerfile
+│   ├── go.mod
+│   ├── go.sum
+│   └── main.go
+└── worker
+    ├── Dockerfile
+    └── main.py
 
-### == WIP ==
+12 directories, 31 files
+```

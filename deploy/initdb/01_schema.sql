@@ -1,3 +1,4 @@
+
 CREATE TABLE IF NOT EXISTS jobs (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
@@ -18,5 +19,5 @@ CREATE TABLE IF NOT EXISTS workers (
     state TEXT DEFAULT 'inactive',
     url TEXT UNIQUE,
     jobs_completed INT DEFAULT 0,
-    created_at TIMESTAMP CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

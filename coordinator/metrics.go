@@ -10,7 +10,7 @@ import (
 var (
 	jobsTotal = promauto.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: "dts_jobs_total",
+			Name: "jobs_total",
 			Help: "Total number of jobs procesed by status",
 		},
 		[]string{"status"}, // completed, failed, timeout
@@ -18,7 +18,7 @@ var (
 
 	workersActive = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "dts_workers_active",
+			Name: "workers_active",
 			Help: "Number of workers by state",
 		},
 		[]string{"state"}, // available, busy, unavailable
@@ -26,21 +26,21 @@ var (
 
 	jobsInQueue = promauto.NewGauge(
 		prometheus.GaugeOpts{
-			Name: "dts_jobs_in_queue",
+			Name: "jobs_in_queue",
 			Help: "Number of jobs waiting in queue",
 		},
 	)
 
 	jobsInDLQ = promauto.NewGauge(
 		prometheus.GaugeOpts{
-			Name: "dts_jobs_in_dlq",
+			Name: "jobs_in_dlq",
 			Help: "Number of jobs in dead letter queue",
 		},
 	)
 
 	jobProcessingDuration = promauto.NewHistogramVec(
 		prometheus.HistogramOpts{
-			Name:    "dts_job_processing_duration_seconds",
+			Name:    "job_processing_duration_seconds",
 			Help:    "Time spent processing jobs",
 			Buckets: []float64{1, 5, 10, 30, 60, 120, 300},
 		},
@@ -49,7 +49,7 @@ var (
 
 	retryAttempts = promauto.NewHistogramVec(
 		prometheus.HistogramOpts{
-			Name:    "dts_job_retry_attempts",
+			Name:    "job_retry_attempts",
 			Help:    "Number of retry attempts per job",
 			Buckets: []float64{0, 1, 2, 3, 4, 5},
 		},
