@@ -24,6 +24,9 @@ A robust, scalable distributed job scheduling system built with Go, Python, Redi
 - **Prometheus Metrics**: Comprehensive system metrics collection
 - **Grafana Dashboard**: Real-time visualization of system performance and health
 
+![Grafana Dashboard](docs/grafana-dashboard.png)
+*Grafana Dashboard*
+
 ## Architecture
 
 ### Components

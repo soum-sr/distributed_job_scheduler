@@ -114,6 +114,7 @@ func sendJobToWorker(workerUrl string, job Job) {
 	}
 
 	// Mark worker as busy before sending Job Request
+	// Single job -> busy state is for simulation
 	updateWorkerState(workerUrl, "busy")
 
 	fmt.Println("DEBUG: sending payload Payload: ", jobPayload)
