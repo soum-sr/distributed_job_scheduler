@@ -54,19 +54,12 @@ cd distributed_job_scheduler
 make up
 ```
 
-or 
-
-```bash
-cd deploy
-docker-compose up --build
-```
-
 ### 3. Access Services 
 - **Submitter API**: http://localhost:8000 
 - **Coordinator**: http://localhost:9000 
 - **Grafana Dashboard**: http://localhost:3000 (admin/admin) 
 - **Prometheus**: http://localhost:9090 
-- **PostgreSQL**: localhost:5432 (for postgres console execute ```psql -U user -d db``` in container terminal)
+- **PostgreSQL**: localhost:5432
 - **Redis**: localhost:6379
 
 ### 4. Submitting Jobs
@@ -141,4 +134,5 @@ curl -X POST http://localhost:8000/submit_job \
     └── main.py
 
 12 directories, 31 files
+
 ```
